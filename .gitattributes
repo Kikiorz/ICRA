@@ -1,2 +1,4 @@
 # Preserve native chat-template whitespace in recorded experimental artifacts.
 results/**/formatted_prompt.txt -whitespace
+# Keep upstream browser library bytes intact.
+vendor/three/** -whitespace

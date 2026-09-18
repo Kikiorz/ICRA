@@ -1,0 +1,8 @@
+{
+  "points": 268324,
+  "max_reprojection_error_pixels": 0.0001220703125,
+  "coordinates_match_float32_cast": true,
+  "max_ply_rounding_error": 5.960381899150491e-08,
+  "colors_preserved": true,
+  "physical_accuracy_evaluated": false
+}

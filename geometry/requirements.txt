@@ -1,0 +1,6 @@
+# Install torch==2.11.0 and torchvision==0.26.0 from the CUDA 12.8 index separately.
+numpy==1.26.4
+Pillow==12.3.0
+huggingface-hub==0.36.2
+einops==0.6.1
+safetensors==0.8.0

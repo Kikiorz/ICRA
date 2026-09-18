@@ -1,5 +1,6 @@
 .venv/
 .venv-hamster/
+.venv-geometry/
 __pycache__/
 *.pyc
 .pytest_cache/

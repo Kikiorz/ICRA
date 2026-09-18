@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>杯子场景 · VGGT 三维点云</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#101821;color:#e6edf5;font:14px/1.6 system-ui,sans-serif}
+header{padding:18px 26px;border-bottom:1px solid #304050;display:flex;align-items:center;justify-content:space-between;gap:20px}
+h1{font-size:21px;margin:0}header p{margin:4px 0 0;color:#9eafc1}.badge{color:#7be2d0;background:#173630;padding:6px 12px;border-radius:20px;white-space:nowrap}
+main{display:grid;grid-template-columns:280px 1fr;min-height:calc(100vh - 104px)}aside{padding:20px;border-right:1px solid #304050;overflow:auto}h2{font-size:15px;margin:0 0 8px}
+.input{position:relative;line-height:0;touch-action:none;cursor:crosshair}.input img{width:100%;display:block;border-radius:7px}.input canvas{position:absolute;inset:0;width:100%;height:100%}
+small,.muted{color:#9eafc1}aside p{margin:7px 0 18px}.depth{width:100%;border-radius:7px}label{display:block;margin-top:16px}input[type=range]{width:100%;accent-color:#59d6c5}button,select{font:inherit;color:#e6edf5;background:#233244;border:1px solid #42566a;border-radius:6px;padding:7px 11px;cursor:pointer}
+button:hover{background:#33475c}a{color:#88d8ff}section{min-width:0;display:flex;flex-direction:column}.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid #263545}.toolbar .status{margin-left:auto;color:#9eafc1}
+#viewport{height:calc(100vh - 220px);min-height:480px;position:relative}#viewport canvas{display:block;width:100%;height:100%;touch-action:none}footer{padding:12px 18px;color:#afbdcc;border-top:1px solid #263545}#error{color:#ffa6a6;padding:12px;display:none}
+.downloads{display:flex;gap:12px;flex-wrap:wrap;margin-top:15px}.legend{display:flex;justify-content:space-between;font-size:12px;color:#9eafc1}
+@media(max-width:760px){main{grid-template-columns:1fr}aside{display:grid;grid-template-columns:1fr 1fr;gap:16px;border-right:0}.controls{grid-column:1/-1}#viewport{height:65vh;min-height:380px}header{padding:14px}.badge{display:none}}
+</style>
+<script type="importmap">{"imports":{"three":"./vendor/three/three.module.js"}}</script>
+</head>
+<body>
+<header><div><h1>从一张杯子图片恢复三维点云</h1><p>VGGT-1B · 彩色可见表面 · 鼠标拖动旋转，滚轮缩放，右键平移</p></div><span class="badge">单图估计 · 尺度未标定</span></header>
+<main>
+<aside>
+<div><h2>输入图像</h2><div class="input" id="roi"><img id="inputImage" alt="送入 VGGT 的杯子图片"><canvas id="roiCanvas" width="518" height="518"></canvas></div><p><small>在图上拖拽框选，只查看对应区域的点。框选不是物体分割。</small></p></div>
+<div><h2>预测深度</h2><img class="depth" id="depthImage" alt="VGGT 预测深度"><div class="legend"><span>浅绿：近</span><span>深蓝：远</span></div></div>
+<div class="controls">
+<label for="confidence">隐藏低置信度点：<output id="confidenceValue">0%</output></label><input id="confidence" type="range" min="0" max="95" step="5" value="0"><small>百分比表示按模型分数排序移除的比例，不是正确概率。</small>
+<label for="pointSize">显示点大小：<output id="sizeValue">2</output></label><input id="pointSize" type="range" min="1" max="6" step="0.5" value="2">
+<p><button id="clearRoi">清除框选</button></p>
+<div class="downloads"><a id="plyLink" download>下载 PLY</a><a id="rawLink" download>原始预测</a><a id="cameraLink">相机参数</a></div>
+</div>
+</aside>
+<section>
+<div class="toolbar"><button data-view="oblique">斜视</button><button data-view="front">原始相机</button><button data-view="side">侧视</button><button data-view="back">背面</button><button id="fit">适应当前区域</button><span class="status" id="status">正在加载点云…</span></div>
+<div id="error" role="alert"></div><div id="viewport"></div>
+<footer>这些点来自预测深度与预测相机参数，没有补全被遮挡的杯子背面，也没有进行机器人坐标标定。旋转后出现空洞或拉伸，可以帮助发现单图几何的局限。</footer>
+</section>
+</main>
+<script type="module" src="./geometry/viewer.js"></script>
+</body></html>

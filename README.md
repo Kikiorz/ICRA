@@ -1,5 +1,7 @@
 # ICRA
 
+**单图三维重建实验已完成**：[旋转查看杯子场景点云](pointcloud.html)、[运行与结果说明](docs/geometry.md)、[下载 PLY](results/vggt_cup_single/pointcloud.ply)。VGGT 生成约 26.8 万个彩色点；这是尺度未标定的可见表面估计。
+
 单张图像与任务描述 → Qwen3.8-27B → 夹爪末端二维轨迹 JSON → 原图坐标叠加。
 
 另已接入并实测 **HAMSTER / VILA-1.5-13B** 高层轨迹模型：[运行说明](docs/hamster.md)、[三组结果对照](comparison.html)、[HAMSTER 原始结果](results/hamster_cup_lift_fp16/)。本次 HAMSTER 输出 4 个点，但末尾多出松爪动作，未完成仿真执行验证。
