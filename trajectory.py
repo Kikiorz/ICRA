@@ -22,7 +22,7 @@ def coordinate(value):
     return value
 
 
-def validate(data, image_size):
+def validate(data, image_size, *, strict_gripper=True):
     if data.get("coordinate_system") != "normalized_1000":
         raise ValueError("Unexpected coordinate system")
     if data.get("tracked_point") != "gripper_tcp":
@@ -56,8 +56,10 @@ def validate(data, image_size):
         coordinate(point["x"])
         coordinate(point["y"])
         phase = point.get("phase")
-        if phase not in phases or point.get("gripper") != grip[phase]:
+        if phase not in phases or point.get("gripper") not in {"open", "close", "closed"}:
             raise ValueError("Invalid phase or gripper state")
+        if strict_gripper and point["gripper"] != grip[phase]:
+            raise ValueError(f"Step {i}: phase {phase} expects gripper={grip[phase]}, got {point['gripper']}")
         order.append(phases[phase])
     if order != sorted(order) or set(order) != set(phases.values()) or order.count(0) != 1:
         raise ValueError("Expected one start, then approach, grasp, lift")
@@ -67,4 +69,3 @@ def validate(data, image_size):
 def to_pixel(x, y, image_size):
     width, height = image_size
     return coordinate(x) * (width - 1) / 1000, coordinate(y) * (height - 1) / 1000
-

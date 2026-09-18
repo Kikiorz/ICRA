@@ -1,0 +1,25 @@
+You are predicting a robot motion plan from ONE static camera image and a task instruction.
+Task: 抓住桌面前景的灰色杯子，然后把它抬离桌面。
+The original image is 256 pixels wide and 256 pixels high.
+
+Return a single JSON object, without markdown. Predict the image-plane trajectory of the robot gripper's tool center point (the midpoint between the fingertips), NOT the wrist housing, cup center, or an object trajectory. Use the same fixed camera projection for all future points. Infer the initial tool center from the image. Choose a plausible grasp of the specified cup and then lift it clear of the table. Distinguish this cup from other objects in the scene. Do not move to an unrelated object. Infer all coordinates yourself from the image; no reference coordinates are provided.
+
+Use normalized coordinates from 0 to 1000 inclusive: origin is top-left, x increases rightward, y increases downward. This applies to coordinates of both the trajectory and the target box. Consider the projected direction of an upward lift under this camera view rather than assuming image y is world height. A static 2D image cannot establish depth, collision-free motion, or grasp feasibility; record relevant assumptions briefly.
+
+Return 8 to 12 ordered waypoints. The first has phase "start" at the observed current tool center. Subsequent phases are "approach", "grasp", then "lift". The gripper is "open" during start and approach, "close" at grasp, and "closed" during lift. Repeated coordinates are allowed for closing in place. Each waypoint must be predicted by you; do not delegate interpolation to the renderer.
+
+Required JSON schema (type descriptions only, not literal values):
+{
+  "task": "the requested task",
+  "coordinate_system": "normalized_1000",
+  "tracked_point": "gripper_tcp",
+  "image_size": [256, 256],
+  "target": {"description": "identify the target cup", "bbox": [xmin, ymin, xmax, ymax]},
+  "grasp_strategy": "briefly describe the intended grasp",
+  "assumptions": ["brief assumptions about hidden geometry and motion"],
+  "waypoints": [
+    {"step": 0, "x": number, "y": number, "phase": "start", "gripper": "open"},
+    "... remaining waypoint objects with consecutive step numbers ..."
+  ]
+}
+

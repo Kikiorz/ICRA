@@ -19,7 +19,9 @@ def font(size):
 
 def render(image_path, data, output_dir):
     source = Image.open(image_path).convert("RGB")
-    validate(data, source.size)
+    # State/phase mismatches are reported separately; they do not prevent displaying
+    # finite, correctly ordered model coordinates. No field is changed here.
+    validate(data, source.size, strict_gripper=False)
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     pixel_points = [{**p, "pixel_x": to_pixel(p["x"], p["y"], source.size)[0],
@@ -74,4 +76,3 @@ if __name__ == "__main__":
     ap.add_argument("--output-dir", required=True)
     args = ap.parse_args()
     render(args.image, json.loads(Path(args.trajectory).read_text()), args.output_dir)
-

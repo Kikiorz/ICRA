@@ -1,0 +1,9 @@
+{
+  "drawable_structure_valid": true,
+  "strict_prompt_schema_valid": false,
+  "coordinates_modified": false,
+  "physical_validity_evaluated": false,
+  "errors": [
+    "Step 5: phase grasp expects gripper=close, got closed"
+  ]
+}

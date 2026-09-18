@@ -1,0 +1,90 @@
+{
+  "task": "抓住桌面前景的灰色杯子，然后把它抬离桌面。",
+  "coordinate_system": "normalized_1000",
+  "tracked_point": "gripper_tcp",
+  "image_size": [
+    256,
+    256
+  ],
+  "target": {
+    "description": "The gray textured cup with a handle sitting on a saucer in the foreground (bottom-center), distinct from the background objects.",
+    "bbox": [
+      312,
+      645,
+      645,
+      918
+    ]
+  },
+  "grasp_strategy": "Approach the cup from above and slightly in front, position the open gripper over the cup rim/body, close the fingers to grasp the cup, then lift vertically so the cup clears the table and saucer.",
+  "assumptions": [
+    "Depth is not observable; the upward world lift is projected as a decrease in image y with a small perspective shift.",
+    "The gripper approaches from above the cup and closes around the cup body/rim.",
+    "The foreground gray cup on the saucer is the target, not the small object behind it or the background.",
+    "Motion is assumed collision-free in the unobserved 3D space."
+  ],
+  "waypoints": [
+    {
+      "step": 0,
+      "x": 566,
+      "y": 547,
+      "phase": "start",
+      "gripper": "open"
+    },
+    {
+      "step": 1,
+      "x": 520,
+      "y": 600,
+      "phase": "approach",
+      "gripper": "open"
+    },
+    {
+      "step": 2,
+      "x": 470,
+      "y": 650,
+      "phase": "approach",
+      "gripper": "open"
+    },
+    {
+      "step": 3,
+      "x": 470,
+      "y": 580,
+      "phase": "approach",
+      "gripper": "open"
+    },
+    {
+      "step": 4,
+      "x": 470,
+      "y": 560,
+      "phase": "grasp",
+      "gripper": "close"
+    },
+    {
+      "step": 5,
+      "x": 470,
+      "y": 560,
+      "phase": "grasp",
+      "gripper": "closed"
+    },
+    {
+      "step": 6,
+      "x": 470,
+      "y": 450,
+      "phase": "lift",
+      "gripper": "closed"
+    },
+    {
+      "step": 7,
+      "x": 470,
+      "y": 350,
+      "phase": "lift",
+      "gripper": "closed"
+    },
+    {
+      "step": 8,
+      "x": 470,
+      "y": 280,
+      "phase": "lift",
+      "gripper": "closed"
+    }
+  ]
+}

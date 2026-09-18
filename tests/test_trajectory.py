@@ -7,6 +7,7 @@ import unittest
 from PIL import Image
 from trajectory import parse_response, to_pixel, validate
 from render import render
+from postprocess import postprocess
 
 
 def fixture():
@@ -60,6 +61,19 @@ class TrajectoryTests(unittest.TestCase):
             points = json.loads((root / "out/pixel_waypoints.json").read_text())
             self.assertEqual(points[0]["x"], data["waypoints"][0]["x"])
             self.assertEqual(points[0]["pixel_x"], 51)
+
+    def test_drawable_mismatch_is_reported_not_repaired(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            Image.new("RGB", (256, 128)).save(root / "input.png")
+            data = fixture()
+            data["waypoints"][4]["gripper"] = "closed"
+            (root / "response.txt").write_text(json.dumps(data))
+            report = postprocess(root)
+            self.assertFalse(report["strict_prompt_schema_valid"])
+            self.assertFalse(report["coordinates_modified"])
+            self.assertEqual(json.loads((root / "trajectory.json").read_text()), data)
+            self.assertTrue((root / "overlay.png").exists())
 
 
 if __name__ == "__main__":

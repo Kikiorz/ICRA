@@ -1,0 +1,83 @@
+[
+  {
+    "step": 0,
+    "x": 566,
+    "y": 547,
+    "phase": "start",
+    "gripper": "open",
+    "pixel_x": 144.33,
+    "pixel_y": 139.485
+  },
+  {
+    "step": 1,
+    "x": 520,
+    "y": 600,
+    "phase": "approach",
+    "gripper": "open",
+    "pixel_x": 132.6,
+    "pixel_y": 153.0
+  },
+  {
+    "step": 2,
+    "x": 470,
+    "y": 650,
+    "phase": "approach",
+    "gripper": "open",
+    "pixel_x": 119.85,
+    "pixel_y": 165.75
+  },
+  {
+    "step": 3,
+    "x": 470,
+    "y": 580,
+    "phase": "approach",
+    "gripper": "open",
+    "pixel_x": 119.85,
+    "pixel_y": 147.9
+  },
+  {
+    "step": 4,
+    "x": 470,
+    "y": 560,
+    "phase": "grasp",
+    "gripper": "close",
+    "pixel_x": 119.85,
+    "pixel_y": 142.8
+  },
+  {
+    "step": 5,
+    "x": 470,
+    "y": 560,
+    "phase": "grasp",
+    "gripper": "closed",
+    "pixel_x": 119.85,
+    "pixel_y": 142.8
+  },
+  {
+    "step": 6,
+    "x": 470,
+    "y": 450,
+    "phase": "lift",
+    "gripper": "closed",
+    "pixel_x": 119.85,
+    "pixel_y": 114.75
+  },
+  {
+    "step": 7,
+    "x": 470,
+    "y": 350,
+    "phase": "lift",
+    "gripper": "closed",
+    "pixel_x": 119.85,
+    "pixel_y": 89.25
+  },
+  {
+    "step": 8,
+    "x": 470,
+    "y": 280,
+    "phase": "lift",
+    "gripper": "closed",
+    "pixel_x": 119.85,
+    "pixel_y": 71.4
+  }
+]

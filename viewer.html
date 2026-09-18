@@ -6,6 +6,7 @@
 body{margin:32px auto;padding:0 20px;max-width:1100px;font:16px system-ui;background:#111827;color:#e5e7eb}h1{font-size:25px}a{color:#7dd3fc}main{display:flex;gap:28px;flex-wrap:wrap}canvas{width:min(100%,650px);height:auto;background:#222;image-rendering:pixelated}aside{flex:1;min-width:270px}input{width:100%;margin:20px 0}pre{overflow:auto;max-height:600px;font-size:13px;background:#1f2937;padding:16px}#status{color:#fbbf24}button{padding:8px 16px;margin-right:8px;cursor:pointer}label{display:block;margin:12px 0}small{color:#9ca3af}
 </style>
 <h1>Qwen3.8-27B · 抓取灰色杯子并抬起</h1>
+<p><a href="?run=results/cup_lift_bf16">思考模式</a> · <a href="?run=results/cup_lift_bf16_no_thinking">非思考模式</a></p>
 <p>点表示夹爪两指之间的中心。蓝色：接近；黄色：抓取；红色：抬起。坐标由模型生成，未人工修正。</p>
 <p id="status">加载结果中…</p>
 <main><section><canvas id="canvas"></canvas><label>显示到第 <strong id="step">0</strong> 点<input id="slider" type="range" min="0" value="0"></label><button id="play">逐点播放</button><button id="all">显示全部</button><p><small>播放仅展示点的先后顺序，不代表预测速度或真实执行时间。</small></p></section>
@@ -30,7 +31,8 @@ function draw(){
  slider.max=data.waypoints.length-1;slider.value=slider.max;slider.oninput=draw;
  document.querySelector('#json').textContent=JSON.stringify(data,null,2);
  for(const [id,file] of Object.entries({overlay:'overlay.png',jsonlink:'trajectory.json',raw:'raw_response.txt',metadata:'metadata.json'}))document.querySelector('#'+id).href=`${root}/${file}`;
- document.querySelector('#status').textContent='真实模型输出 · BF16 · 二维预测，未经过机器人执行验证';
+ const validation=await fetch(`${root}/schema_validation.json`).then(r=>r.json());
+ document.querySelector('#status').textContent='真实模型输出 · BF16 · 二维预测，未经过机器人执行验证'+(validation.strict_prompt_schema_valid?'':' · 严格格式校验未通过：'+validation.errors.join('; '));
  document.querySelector('#all').onclick=()=>{clearInterval(timer);slider.value=slider.max;draw()};
  document.querySelector('#play').onclick=()=>{clearInterval(timer);slider.value=0;draw();timer=setInterval(()=>{if(Number(slider.value)>=Number(slider.max)){clearInterval(timer);return}slider.value=Number(slider.value)+1;draw()},650)};
  draw();

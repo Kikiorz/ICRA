@@ -4,6 +4,8 @@
 
 本实验输入为 `examples/long_task01_ep0001.png`，任务为“抓住桌面前景的灰色杯子，然后把它抬离桌面”。模型预测夹爪两指之间的中心点（TCP），不是杯子中心或腕部外壳。
 
+已完成 BF16 思考/非思考两次实测，原始输出与轨迹图见 **[首次实验结果](results/README.md)**。流程可运行，但本样例存在末端定位与抓取点偏差；保留失败，不人工美化坐标。
+
 ## 实验约定
 
 - 模型：`Qwen/Qwen3.8-27B`，revision `1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0`。
@@ -12,7 +14,7 @@
 - 默认启用 thinking，`reasoning_effort=medium`，greedy decoding（`do_sample=False`），seed 42。这是实验设置，不是官方采样推荐参数。
 - 模型生成 8–12 个点，坐标为 `[0,1000]`，原点左上。转换为原图像素使用 `x*(W-1)/1000, y*(H-1)/1000`。
 - 阶段为 start → approach → grasp → lift，包含对应夹爪状态。
-- 保存原始回复和模型元数据。格式校验失败时保留错误，不补点、不截断越界点、不手工修正轨迹。
+- 保存原始回复和模型元数据，不补点、不截断越界点、不手工修正轨迹。致命坐标或结构错误不绘制；夹爪状态与提示词约定不一致时，记录严格校验失败，仍可展示未修改的轨迹。
 - Pillow 只连接相邻模型点，不进行轨迹插值或平滑。`overlay.png` 与输入同尺寸；`trajectory.png` 是四倍最近邻放大和图例。
 - 结果仅为模型的二维运动假设，未经深度、运动学、碰撞或抓取验证，不能直接作为机器人命令。
 
@@ -46,6 +48,7 @@ uv pip install --python .venv/bin/python -r requirements.txt
 | `pixel_waypoints.json` | 原始坐标及其像素换算 |
 | `overlay.png` / `trajectory.png` | 原尺寸叠加图 / 放大展示图 |
 | `validation_error.txt` | 仅失败时产生 |
+| `schema_validation.json` | 是否可绘制、是否严格遵循提示词；格式通过不代表物理正确 |
 
 `outputs/` 默认忽略；选定的真实实验结果保存到 `results/`。模型权重、环境、凭据不入库。
 
@@ -56,6 +59,8 @@ uv pip install --python .venv/bin/python -r requirements.txt
   --trajectory results/cup_lift_bf16/trajectory.json --output-dir outputs/redraw
 .venv/bin/python -m unittest discover -s tests -v
 ```
+
+对保留的原始回复重新校验和绘图：`.venv/bin/python postprocess.py results/cup_lift_bf16`。不会调用模型或修改坐标。第一次推理曾因 `grasp/closed` 与提示词的 `grasp/close` 约定不同而被严格校验拦下；后处理显式区分“可绘制”与“严格符合提示词”，保留原错误记录。
 
 ## 查看逐点轨迹
 

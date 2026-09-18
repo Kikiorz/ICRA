@@ -7,8 +7,7 @@ from pathlib import Path
 import time
 
 from PIL import Image
-from trajectory import parse_response, validate
-from render import render
+from postprocess import postprocess
 
 
 def main():
@@ -71,12 +70,11 @@ def main():
     try:
         if metadata["reached_token_limit"]:
             raise ValueError("Generation reached token limit; raw response saved, not rendered")
-        data = validate(parse_response(text), image.size)
+        report = postprocess(output)
     except (ValueError, KeyError, TypeError) as exc:
         (output / "validation_error.txt").write_text(str(exc))
         raise
-    (output / "trajectory.json").write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
-    render(image_path, data, output)
+    print(json.dumps(report, indent=2), flush=True)
     print(json.dumps(metadata, indent=2, ensure_ascii=False), flush=True)
     print(f"Results saved to {output}", flush=True)
 

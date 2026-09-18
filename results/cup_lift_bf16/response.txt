@@ -1,0 +1,61 @@
+The user wants a robot motion plan in normalized image coordinates (0-1000). I need to look at the image carefully.
+
+Image is 256x256. The robot arm is at the top, with a gripper. The gripper's tool center point (midpoint between fingertips) appears to be around the center-top area. Let me look: the gripper housing is the gray box on the left-center, and the red wire loop is the gripper fingers area. The fingertips midpoint seems to be around x=140, y=140 in pixel terms? Let's estimate. The red loop is around pixel (140, 140). Actually the gripper fingers (red) are around x=140-150, y=130-150. The midpoint maybe (145, 140). In normalized: x = 145/256*1000 ≈ 566, y = 140/256*1000 ≈ 547.
+
+The cup is in the foreground bottom center. The cup body is around pixel x=85-160, y=165-235. The saucer below. The cup center maybe (120, 200). Normalized: x≈469, y≈781.
+
+Grasp strategy: approach the cup from above, close gripper around the cup rim/body, then lift up (which in image projection is upward, decreasing y, but also the cup is in foreground so lifting moves it up in image).
+
+Let me define waypoints:
+- step 0 start: at current TCP ~ (566, 547), open.
+- approach: move toward cup, e.g., (469, 650) open, then (469, 560) open near rim.
+- grasp: close at (469, 560) closed? Actually grasp phase with gripper close.
+- lift: move up to (469, 350) closed, then (469, 250) closed.
+
+Need 8-12 waypoints. Let's make:
+0 start (566,547) open
+1 approach (520,600) open
+2 approach (470,650) open
+3 approach (470,580) open
+4 grasp (470,560) close
+5 grasp (470,560) closed (repeat for closing)
+6 lift (470,450) closed
+7 lift (470,350) closed
+8 lift (470,280) closed
+
+That's 9 waypoints. Good.
+
+Target bbox for cup: pixel approx xmin=80, ymin=165, xmax=165, ymax=235. Normalized: xmin=80/256*1000≈312, ymin=165/256*1000≈645, xmax=165/256*1000≈645, ymax=235/256*1000≈918.
+
+Let me double check cup location: cup appears centered around x=120 px, top rim ~165 px, bottom ~235 px, left handle ~75 px, right ~160 px. So bbox [312,645,645,918] roughly. Good.
+
+Assumptions: depth unknown, lift direction in image is upward (decreasing y) with slight perspective; gripper approaches from above; cup is the gray textured cup on saucer in foreground, distinct from background.
+
+Now produce JSON.
+</think>
+
+{
+  "task": "抓住桌面前景的灰色杯子，然后把它抬离桌面。",
+  "coordinate_system": "normalized_1000",
+  "tracked_point": "gripper_tcp",
+  "image_size": [256, 256],
+  "target": {"description": "The gray textured cup with a handle sitting on a saucer in the foreground (bottom-center), distinct from the background objects.", "bbox": [312, 645, 645, 918]},
+  "grasp_strategy": "Approach the cup from above and slightly in front, position the open gripper over the cup rim/body, close the fingers to grasp the cup, then lift vertically so the cup clears the table and saucer.",
+  "assumptions": [
+        "Depth is not observable; the upward world lift is projected as a decrease in image y with a small perspective shift.",
+        "The gripper approaches from above the cup and closes around the cup body/rim.",
+        "The foreground gray cup on the saucer is the target, not the small object behind it or the background.",
+        "Motion is assumed collision-free in the unobserved 3D space."
+  ],
+  "waypoints": [
+    {"step": 0, "x": 566, "y": 547, "phase": "start", "gripper": "open"},
+    {"step": 1, "x": 520, "y": 600, "phase": "approach", "gripper": "open"},
+    {"step": 2, "x": 470, "y": 650, "phase": "approach", "gripper": "open"},
+    {"step": 3, "x": 470, "y": 580, "phase": "approach", "gripper": "open"},
+    {"step": 4, "x": 470, "y": 560, "phase": "grasp", "gripper": "close"},
+    {"step": 5, "x": 470, "y": 560, "phase": "grasp", "gripper": "closed"},
+    {"step": 6, "x": 470, "y": 450, "phase": "lift", "gripper": "closed"},
+    {"step": 7, "x": 470, "y": 350, "phase": "lift", "gripper": "closed"},
+    {"step": 8, "x": 470, "y": 280, "phase": "lift", "gripper": "closed"}
+  ]
+}

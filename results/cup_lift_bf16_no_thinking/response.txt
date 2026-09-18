@@ -1,0 +1,86 @@
+{
+  "task": "抓住桌面前景的灰色杯子，然后把它抬离桌面。",
+  "coordinate_system": "normalized_1000",
+  "tracked_point": "gripper_tcp",
+  "image_size": [256, 256],
+  "target": {
+    "description": "gray cup in the foreground on a saucer",
+    "bbox": [
+      265,
+      640,
+      540,
+      880
+    ]
+  },
+  "grasp_strategy": "Approach the cup from above and slightly to the right, aligning the open gripper with the cup's rim, then close to grasp the sides and lift vertically.",
+  "assumptions": [
+    "The camera is positioned above and to the front of the workspace.",
+    "The gripper is currently open and positioned above the table to the left of the cup.",
+    "Lifting the cup involves moving the TCP upwards in the image plane (decreasing y) and slightly rightwards to maintain alignment."
+  ],
+  "waypoints": [
+    {
+      "step": 0,
+      "x": 380,
+      "y": 480,
+      "phase": "start",
+      "gripper": "open"
+    },
+    {
+      "step": 1,
+      "x": 400,
+      "y": 520,
+      "phase": "approach",
+      "gripper": "open"
+    },
+    {
+      "step": 2,
+      "x": 420,
+      "y": 580,
+      "phase": "approach",
+      "gripper": "open"
+    },
+    {
+      "step": 3,
+      "x": 430,
+      "y": 640,
+      "phase": "approach",
+      "gripper": "open"
+    },
+    {
+      "step": 4,
+      "x": 430,
+      "y": 640,
+      "phase": "grasp",
+      "gripper": "close"
+    },
+    {
+      "step": 5,
+      "x": 430,
+      "y": 640,
+      "phase": "grasp",
+      "gripper": "closed"
+    },
+    {
+      "step": 6,
+      "x": 435,
+      "y": 580,
+      "phase": "lift",
+      "gripper": "closed"
+    },
+    {
+      "step": 7,
+      "x": 440,
+      "y": 520,
+      "phase": "lift",
+      "gripper": "closed"
+    },
+    {
+      "step": 8,
+      "x": 445,
+      "y": 460,
+      "phase": "lift",
+      "gripper": "closed"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "model": "Qwen3.8-27B",
+  "revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "dtype": "bfloat16",
+  "quantization": null,
+  "image_sha256": "42917c3071631975fd91351da8985db7a348cdcea0810e43f7821b5483b276a4",
+  "image_size": [
+    256,
+    256
+  ],
+  "task": "抓住桌面前景的灰色杯子，然后把它抬离桌面。",
+  "seed": 42,
+  "thinking": false,
+  "reasoning_effort": "medium",
+  "do_sample": false,
+  "max_new_tokens": 4096,
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+  "versions": {
+    "torch": "2.11.0+cu128",
+    "transformers": "5.17.0",
+    "accelerate": "1.15.0",
+    "Pillow": "12.3.0"
+  },
+  "generation_seconds": 34.266387834912166,
+  "input_tokens": 600,
+  "output_tokens": 719,
+  "peak_gpu_allocated_gib": 51.38146209716797,
+  "peak_gpu_reserved_gib": 51.4375,
+  "reached_token_limit": false
+}
