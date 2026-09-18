@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ICRA · 模型预测轨迹</title>
+<style>
+body{margin:32px auto;padding:0 20px;max-width:1100px;font:16px system-ui;background:#111827;color:#e5e7eb}h1{font-size:25px}a{color:#7dd3fc}main{display:flex;gap:28px;flex-wrap:wrap}canvas{width:min(100%,650px);height:auto;background:#222;image-rendering:pixelated}aside{flex:1;min-width:270px}input{width:100%;margin:20px 0}pre{overflow:auto;max-height:600px;font-size:13px;background:#1f2937;padding:16px}#status{color:#fbbf24}button{padding:8px 16px;margin-right:8px;cursor:pointer}label{display:block;margin:12px 0}small{color:#9ca3af}
+</style>
+<h1>Qwen3.8-27B · 抓取灰色杯子并抬起</h1>
+<p>点表示夹爪两指之间的中心。蓝色：接近；黄色：抓取；红色：抬起。坐标由模型生成，未人工修正。</p>
+<p id="status">加载结果中…</p>
+<main><section><canvas id="canvas"></canvas><label>显示到第 <strong id="step">0</strong> 点<input id="slider" type="range" min="0" value="0"></label><button id="play">逐点播放</button><button id="all">显示全部</button><p><small>播放仅展示点的先后顺序，不代表预测速度或真实执行时间。</small></p></section>
+<aside><div id="info"></div><p><a id="overlay">下载原尺寸叠加图</a> · <a id="jsonlink">坐标 JSON</a></p><p><a id="raw">模型原始输出</a> · <a id="metadata">运行记录</a></p><pre id="json"></pre></aside></main>
+<script>
+const root = new URLSearchParams(location.search).get('run') || 'results/cup_lift_bf16';
+if (!/^results\/[a-zA-Z0-9_-]+$/.test(root)) throw Error('Invalid run path');
+const colors={start:'#ffffff',approach:'#00bfff',grasp:'#ffcb33',lift:'#fa6575'};
+const canvas=document.querySelector('#canvas'), ctx=canvas.getContext('2d'), slider=document.querySelector('#slider');
+let data,img,timer;
+function draw(){
+  const end=Number(slider.value);document.querySelector('#step').textContent=end;
+  ctx.drawImage(img,0,0,canvas.width,canvas.height);
+  const points=data.waypoints.map(p=>({...p,px:p.x/1000*(img.width-1)*4,py:p.y/1000*(img.height-1)*4}));
+  for(let i=1;i<=end;i++){const a=points[i-1],b=points[i];ctx.strokeStyle=colors[b.phase];ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(a.px,a.py);ctx.lineTo(b.px,b.py);ctx.stroke();}
+  for(let i=0;i<=end;i++){const p=points[i];ctx.fillStyle=colors[p.phase];ctx.beginPath();ctx.arc(p.px,p.py,8,0,Math.PI*2);ctx.fill();ctx.font='bold 28px sans-serif';ctx.lineWidth=3;ctx.strokeStyle='#000';const x=Math.max(0,Math.min(canvas.width-35,p.px+(i%2?-32:13))),y=Math.max(30,p.py-10);ctx.strokeText(i,x,y);ctx.fillText(i,x,y);}
+  const p=points[end];document.querySelector('#info').textContent=`第 ${end} 点 · ${p.phase} · 夹爪 ${p.gripper} · 原图像素 (${(p.px/4).toFixed(1)}, ${(p.py/4).toFixed(1)})`;
+}
+(async()=>{try{
+ const response=await fetch(`${root}/trajectory.json`);if(!response.ok)throw Error('结果尚未生成');data=await response.json();
+ img=new Image();img.src=`${root}/input.png`;await img.decode();canvas.width=img.width*4;canvas.height=img.height*4;ctx.imageSmoothingEnabled=false;
+ slider.max=data.waypoints.length-1;slider.value=slider.max;slider.oninput=draw;
+ document.querySelector('#json').textContent=JSON.stringify(data,null,2);
+ for(const [id,file] of Object.entries({overlay:'overlay.png',jsonlink:'trajectory.json',raw:'raw_response.txt',metadata:'metadata.json'}))document.querySelector('#'+id).href=`${root}/${file}`;
+ document.querySelector('#status').textContent='真实模型输出 · BF16 · 二维预测，未经过机器人执行验证';
+ document.querySelector('#all').onclick=()=>{clearInterval(timer);slider.value=slider.max;draw()};
+ document.querySelector('#play').onclick=()=>{clearInterval(timer);slider.value=0;draw();timer=setInterval(()=>{if(Number(slider.value)>=Number(slider.max)){clearInterval(timer);return}slider.value=Number(slider.value)+1;draw()},650)};
+ draw();
+}catch(error){document.querySelector('#status').textContent=error.message}})();
+</script>
+</html>
