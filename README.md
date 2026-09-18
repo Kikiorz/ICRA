@@ -59,7 +59,7 @@ uv pip install --python .venv/bin/python -r requirements.txt
 
 ## 查看逐点轨迹
 
-服务器端运行 `bash scripts/serve_results.sh`，或安装 `scripts/icra-viewer.conf` 到 Supervisor 配置目录后执行 `supervisorctl reread && supervisorctl update`。服务仅监听 `127.0.0.1:8080`。使用 SSH `-L 8080:localhost:8080` 转发后，在本地打开 `http://localhost:8080/viewer.html`。
+服务器端运行 `bash scripts/serve_results.sh`，或安装 `scripts/icra-viewer.conf` 到 Supervisor 配置目录后执行 `supervisorctl reread && supervisorctl update`。服务仅监听 `127.0.0.1:18080`，避开实例的 Jupyter 端口。使用 SSH `-L 8080:localhost:18080` 转发后，在本地打开 `http://localhost:8080/viewer.html`。
 
 页面默认读取 `results/cup_lift_bf16/`。可用 `?run=results/另一个实验目录` 选择其他结果。播放只表示点的顺序，不代表机械臂执行速度。
 
