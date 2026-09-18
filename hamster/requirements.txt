@@ -1,0 +1,11 @@
+transformers==4.37.2
+accelerate==0.27.2
+huggingface-hub==0.36.2
+tokenizers==0.15.2
+sentencepiece==0.2.1
+numpy==1.26.4
+einops==0.6.1
+Pillow==12.3.0
+protobuf>=4,<6
+requests>=2.31
+s2wrapper @ git+https://github.com/bfshi/scaling_on_scales.git@9c008a37540e761f53574b488979db6e49a64312

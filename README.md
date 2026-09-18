@@ -2,11 +2,15 @@
 
 单张图像与任务描述 → Qwen3.8-27B → 夹爪末端二维轨迹 JSON → 原图坐标叠加。
 
+另已接入并实测 **HAMSTER / VILA-1.5-13B** 高层轨迹模型：[运行说明](docs/hamster.md)、[三组结果对照](comparison.html)、[HAMSTER 原始结果](results/hamster_cup_lift_fp16/)。本次 HAMSTER 输出 4 个点，但末尾多出松爪动作，未完成仿真执行验证。
+
 本实验输入为 `examples/long_task01_ep0001.png`，任务为“抓住桌面前景的灰色杯子，然后把它抬离桌面”。模型预测夹爪两指之间的中心点（TCP），不是杯子中心或腕部外壳。
 
 已完成 BF16 思考/非思考两次实测，原始输出与轨迹图见 **[首次实验结果](results/README.md)**。流程可运行，但本样例存在末端定位与抓取点偏差；保留失败，不人工美化坐标。
 
 ## 实验约定
+
+以下约定针对 Qwen；HAMSTER 的原生提示、输出结构与环境见[单独说明](docs/hamster.md)。
 
 - 模型：`Qwen/Qwen3.8-27B`，revision `1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0`。
 - BF16，无量化；单张图片，单请求。使用 Transformers，SDPA attention。

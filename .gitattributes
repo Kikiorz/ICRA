@@ -1,0 +1,2 @@
+# Preserve native chat-template whitespace in recorded experimental artifacts.
+results/**/formatted_prompt.txt -whitespace

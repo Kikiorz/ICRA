@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>杯子抓取：高层轨迹预测</title>
+<style>
+body{font:16px/1.65 system-ui,sans-serif;background:#111923;color:#e8eef5;max-width:1400px;margin:auto;padding:30px}
+h1{font-size:26px}p{color:#bbc9d8}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+article{background:#1c2938;border:1px solid #314052;border-radius:12px;padding:20px}h2{font-size:19px;margin:0}
+img{display:block;width:100%;image-rendering:pixelated;margin:18px 0;border-radius:6px}a{color:#8cd5ff}
+.note{background:#26313e;padding:16px;border-radius:8px}small{color:#b0c0d2}@media(max-width:800px){.grid{grid-template-columns:1fr}}
+</style>
+<h1>同一张杯子图上的高层轨迹预测</h1>
+<p>任务：抓住桌面前景的灰色杯子，然后抬离桌面。连线和编号直接来自模型输出，仅展示二维预测。</p>
+<div class="grid">
+<article>
+<h2>HAMSTER · VILA-1.5-13B</h2><small>经过轨迹微调 · 英文原生提示格式 · FP16</small>
+<img src="results/hamster_cup_lift_fp16/overlay.png" alt="HAMSTER 预测的末端路径">
+<a href="results/hamster_cup_lift_fp16/trajectory.png">放大图与开合动作</a> ·
+<a href="results/hamster_cup_lift_fp16/response.txt">原始回复</a> ·
+<a href="results/hamster_cup_lift_fp16/trajectory.json">点坐标</a>
+</article>
+<article>
+<h2>Qwen3.8-27B · 思考</h2><small>通用模型 · 中文任务与 JSON 提示 · BF16</small>
+<img src="results/cup_lift_bf16/overlay.png" alt="Qwen 思考模式预测的末端路径">
+<a href="viewer.html?run=results/cup_lift_bf16">逐点查看</a> ·
+<a href="results/cup_lift_bf16/response.txt">原始回复</a> ·
+<a href="results/cup_lift_bf16/trajectory.json">点坐标</a>
+</article>
+<article>
+<h2>Qwen3.8-27B · 非思考</h2><small>通用模型 · 中文任务与 JSON 提示 · BF16</small>
+<img src="results/cup_lift_bf16_no_thinking/overlay.png" alt="Qwen 非思考模式预测的末端路径">
+<a href="viewer.html?run=results/cup_lift_bf16_no_thinking">逐点查看</a> ·
+<a href="results/cup_lift_bf16_no_thinking/response.txt">原始回复</a> ·
+<a href="results/cup_lift_bf16_no_thinking/trajectory.json">点坐标</a>
+</article>
+</div>
+<p class="note">这是单张图的探索性对照：模型的训练数据、参数量、提示格式、语言和精度不同。不能据此将差异归因于通用推理能力，也不能从画出的路径推断抓取成功率。本页没有仿真执行结果或人工标注的真实轨迹。</p>
+<p><a href="docs/hamster.md">复现说明</a> · <a href="results/README.md">实验记录</a></p>
+</html>
